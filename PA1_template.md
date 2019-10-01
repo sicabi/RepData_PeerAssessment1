@@ -112,7 +112,7 @@ Then, after having aggreated the total number of steps taken per date, we can pl
 hist(steps.per.day$steps, breaks = "Sturges", main = "Total number of steps taken each day", xlab = "Steps", ylab = "Days")
 ```
 
-![](PA1_report_files/figure-html/total.number.steps3-1.png)<!-- -->
+![](PA1_template_files/figure-html/total.number.steps3-1.png)<!-- -->
 
 We see a normal distribution in the data, meaning that, in most days, our individual probably will take around 10,000 and 15,000 steps in a whole day.
 
@@ -200,7 +200,7 @@ axis(side = 1, at = seq(from = 0, to = 2300, by = 100),
      labels = seq(from = 0, to = 2300, by = 100))
 ```
 
-![](PA1_report_files/figure-html/daily.activity.plot-1.png)<!-- -->
+![](PA1_template_files/figure-html/daily.activity.plot-1.png)<!-- -->
 
 ### 3.2 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -680,7 +680,7 @@ hist(new.steps.per.day$steps, breaks = "Sturges",
      xlab = "Steps", ylab = "Days")
 ```
 
-![](PA1_report_files/figure-html/new.steps.hist-1.png)<!-- -->
+![](PA1_template_files/figure-html/new.steps.hist-1.png)<!-- -->
 
 Now, we can see that this distribution is more left-weighted than the first one. This means that is more probable that our individual takes between 5,000 and 15,000 steps in any given day.
 
@@ -785,7 +785,7 @@ Now, we can call the lattice plotting system to know if there are any difference
 library("lattice")
 xyplot(steps ~ interval | as.factor(weekend), data = intervals.weekends, 
        type = "l", layout = c(1,2),
-       main = "Average number of steps done by interval per day type", 
+       main = "Average number of steps taken by interval per day type", 
        ylab = "Steps", xlab = "Time (5-minute interval)",
        panel = function(x, y, ...){
                panel.xyplot(x, y, ...)
@@ -793,7 +793,7 @@ xyplot(steps ~ interval | as.factor(weekend), data = intervals.weekends,
        })
 ```
 
-![](PA1_report_files/figure-html/plot.weekdays.weekend-1.png)<!-- -->
+![](PA1_template_files/figure-html/plot.weekdays.weekend-1.png)<!-- -->
 
 By the results of the plot, we see that, on average, our individual takes a few more steps in her weekends than in her weekdays. Also, that her activity is more constant along the weekend and that she also starts her days erlier in weekdays.
 
