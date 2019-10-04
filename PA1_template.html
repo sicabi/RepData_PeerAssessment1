@@ -270,7 +270,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -377,15 +376,15 @@ summary {
 <h2>1. Loading and preprocessing the data</h2>
 <p>First, we unzip the data in the working project directory. Then, we should load the data into de R environment. We choose not to convert strings as factors to avoid further problems while reformatting our variables.</p>
 <pre class="r"><code>unzip(&quot;activity.zip&quot;, list = FALSE)
-activity.data &lt;- read.csv(file = &quot;activity.csv&quot;, stringsAsFactors = FALSE,
-                           header = TRUE, fileEncoding = &quot;latin1&quot;)</code></pre>
+activity.data &lt;- read.csv(file = &quot;activity.csv&quot;, stringsAsFactors = FALSE, header = TRUE, 
+                          fileEncoding = &quot;latin1&quot;)</code></pre>
 <p>After loading the data, we preprocess it to make sure ourselves the data is tidy. The first thing to do is to explore the dataset and to know in which format our variables are stored.</p>
 <pre class="r"><code>str(activity.data)</code></pre>
 <pre><code>## 'data.frame':    17568 obs. of  3 variables:
 ##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
 ##  $ date    : chr  &quot;2012-10-01&quot; &quot;2012-10-01&quot; &quot;2012-10-01&quot; &quot;2012-10-01&quot; ...
 ##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...</code></pre>
-<p>By this exploration, we can see that the date variable is in an R date format (%Y-%m-%d) although it is stored as a character variable. Next, we should set the date up with the command as.Date. As the time zone is not specified from the original source, we assing our current location as the default time zone.</p>
+<p>By this exploration, we can see that the date variable is in an R date format (%Y-%m-%d) although it is stored as a character variable. Next, we should set the date up with the command <code>as.Date</code>. As the time zone is not specified from the original source, we assing our current location as the default time zone.</p>
 <pre class="r"><code>activity.data$date &lt;-  as.Date(activity.data$date, tz = Sys.timezone())</code></pre>
 <p>We can see that the date variable is stored now in a date format.</p>
 <pre class="r"><code>str(activity.data)</code></pre>
@@ -413,6 +412,60 @@ print(mean.steps)</code></pre>
 <p>We calculate the total number of steps taken per date using the aggregate function and applying, as well, the sum function to it. We store the result of the aggregation in a new data frame.</p>
 <pre class="r"><code>steps.per.day &lt;- aggregate(formula = steps ~ date, data = activity.data, FUN = sum)
 print(steps.per.day)</code></pre>
+<pre><code>##          date steps
+## 1  2012-10-02   126
+## 2  2012-10-03 11352
+## 3  2012-10-04 12116
+## 4  2012-10-05 13294
+## 5  2012-10-06 15420
+## 6  2012-10-07 11015
+## 7  2012-10-09 12811
+## 8  2012-10-10  9900
+## 9  2012-10-11 10304
+## 10 2012-10-12 17382
+## 11 2012-10-13 12426
+## 12 2012-10-14 15098
+## 13 2012-10-15 10139
+## 14 2012-10-16 15084
+## 15 2012-10-17 13452
+## 16 2012-10-18 10056
+## 17 2012-10-19 11829
+## 18 2012-10-20 10395
+## 19 2012-10-21  8821
+## 20 2012-10-22 13460
+## 21 2012-10-23  8918
+## 22 2012-10-24  8355
+## 23 2012-10-25  2492
+## 24 2012-10-26  6778
+## 25 2012-10-27 10119
+## 26 2012-10-28 11458
+## 27 2012-10-29  5018
+## 28 2012-10-30  9819
+## 29 2012-10-31 15414
+## 30 2012-11-02 10600
+## 31 2012-11-03 10571
+## 32 2012-11-05 10439
+## 33 2012-11-06  8334
+## 34 2012-11-07 12883
+## 35 2012-11-08  3219
+## 36 2012-11-11 12608
+## 37 2012-11-12 10765
+## 38 2012-11-13  7336
+## 39 2012-11-15    41
+## 40 2012-11-16  5441
+## 41 2012-11-17 14339
+## 42 2012-11-18 15110
+## 43 2012-11-19  8841
+## 44 2012-11-20  4472
+## 45 2012-11-21 12787
+## 46 2012-11-22 20427
+## 47 2012-11-23 21194
+## 48 2012-11-24 14478
+## 49 2012-11-25 11834
+## 50 2012-11-26 11162
+## 51 2012-11-27 13646
+## 52 2012-11-28 10183
+## 53 2012-11-29  7047</code></pre>
 </div>
 <div id="make-a-histogram-of-the-total-number-of-steps-taken-each-day" class="section level3">
 <h3>2.2 Make a histogram of the total number of steps taken each day</h3>
@@ -547,296 +600,6 @@ aggregate(formula = missing.steps ~ date, data = activity.data, FUN = sum)</code
 ## 59 2012-11-28             0
 ## 60 2012-11-29             0
 ## 61 2012-11-30           288</code></pre>
-<pre class="r"><code>aggregate(formula = missing.steps ~ interval, data = activity.data, FUN = sum)</code></pre>
-<pre><code>##     interval missing.steps
-## 1          0             8
-## 2          5             8
-## 3         10             8
-## 4         15             8
-## 5         20             8
-## 6         25             8
-## 7         30             8
-## 8         35             8
-## 9         40             8
-## 10        45             8
-## 11        50             8
-## 12        55             8
-## 13       100             8
-## 14       105             8
-## 15       110             8
-## 16       115             8
-## 17       120             8
-## 18       125             8
-## 19       130             8
-## 20       135             8
-## 21       140             8
-## 22       145             8
-## 23       150             8
-## 24       155             8
-## 25       200             8
-## 26       205             8
-## 27       210             8
-## 28       215             8
-## 29       220             8
-## 30       225             8
-## 31       230             8
-## 32       235             8
-## 33       240             8
-## 34       245             8
-## 35       250             8
-## 36       255             8
-## 37       300             8
-## 38       305             8
-## 39       310             8
-## 40       315             8
-## 41       320             8
-## 42       325             8
-## 43       330             8
-## 44       335             8
-## 45       340             8
-## 46       345             8
-## 47       350             8
-## 48       355             8
-## 49       400             8
-## 50       405             8
-## 51       410             8
-## 52       415             8
-## 53       420             8
-## 54       425             8
-## 55       430             8
-## 56       435             8
-## 57       440             8
-## 58       445             8
-## 59       450             8
-## 60       455             8
-## 61       500             8
-## 62       505             8
-## 63       510             8
-## 64       515             8
-## 65       520             8
-## 66       525             8
-## 67       530             8
-## 68       535             8
-## 69       540             8
-## 70       545             8
-## 71       550             8
-## 72       555             8
-## 73       600             8
-## 74       605             8
-## 75       610             8
-## 76       615             8
-## 77       620             8
-## 78       625             8
-## 79       630             8
-## 80       635             8
-## 81       640             8
-## 82       645             8
-## 83       650             8
-## 84       655             8
-## 85       700             8
-## 86       705             8
-## 87       710             8
-## 88       715             8
-## 89       720             8
-## 90       725             8
-## 91       730             8
-## 92       735             8
-## 93       740             8
-## 94       745             8
-## 95       750             8
-## 96       755             8
-## 97       800             8
-## 98       805             8
-## 99       810             8
-## 100      815             8
-## 101      820             8
-## 102      825             8
-## 103      830             8
-## 104      835             8
-## 105      840             8
-## 106      845             8
-## 107      850             8
-## 108      855             8
-## 109      900             8
-## 110      905             8
-## 111      910             8
-## 112      915             8
-## 113      920             8
-## 114      925             8
-## 115      930             8
-## 116      935             8
-## 117      940             8
-## 118      945             8
-## 119      950             8
-## 120      955             8
-## 121     1000             8
-## 122     1005             8
-## 123     1010             8
-## 124     1015             8
-## 125     1020             8
-## 126     1025             8
-## 127     1030             8
-## 128     1035             8
-## 129     1040             8
-## 130     1045             8
-## 131     1050             8
-## 132     1055             8
-## 133     1100             8
-## 134     1105             8
-## 135     1110             8
-## 136     1115             8
-## 137     1120             8
-## 138     1125             8
-## 139     1130             8
-## 140     1135             8
-## 141     1140             8
-## 142     1145             8
-## 143     1150             8
-## 144     1155             8
-## 145     1200             8
-## 146     1205             8
-## 147     1210             8
-## 148     1215             8
-## 149     1220             8
-## 150     1225             8
-## 151     1230             8
-## 152     1235             8
-## 153     1240             8
-## 154     1245             8
-## 155     1250             8
-## 156     1255             8
-## 157     1300             8
-## 158     1305             8
-## 159     1310             8
-## 160     1315             8
-## 161     1320             8
-## 162     1325             8
-## 163     1330             8
-## 164     1335             8
-## 165     1340             8
-## 166     1345             8
-## 167     1350             8
-## 168     1355             8
-## 169     1400             8
-## 170     1405             8
-## 171     1410             8
-## 172     1415             8
-## 173     1420             8
-## 174     1425             8
-## 175     1430             8
-## 176     1435             8
-## 177     1440             8
-## 178     1445             8
-## 179     1450             8
-## 180     1455             8
-## 181     1500             8
-## 182     1505             8
-## 183     1510             8
-## 184     1515             8
-## 185     1520             8
-## 186     1525             8
-## 187     1530             8
-## 188     1535             8
-## 189     1540             8
-## 190     1545             8
-## 191     1550             8
-## 192     1555             8
-## 193     1600             8
-## 194     1605             8
-## 195     1610             8
-## 196     1615             8
-## 197     1620             8
-## 198     1625             8
-## 199     1630             8
-## 200     1635             8
-## 201     1640             8
-## 202     1645             8
-## 203     1650             8
-## 204     1655             8
-## 205     1700             8
-## 206     1705             8
-## 207     1710             8
-## 208     1715             8
-## 209     1720             8
-## 210     1725             8
-## 211     1730             8
-## 212     1735             8
-## 213     1740             8
-## 214     1745             8
-## 215     1750             8
-## 216     1755             8
-## 217     1800             8
-## 218     1805             8
-## 219     1810             8
-## 220     1815             8
-## 221     1820             8
-## 222     1825             8
-## 223     1830             8
-## 224     1835             8
-## 225     1840             8
-## 226     1845             8
-## 227     1850             8
-## 228     1855             8
-## 229     1900             8
-## 230     1905             8
-## 231     1910             8
-## 232     1915             8
-## 233     1920             8
-## 234     1925             8
-## 235     1930             8
-## 236     1935             8
-## 237     1940             8
-## 238     1945             8
-## 239     1950             8
-## 240     1955             8
-## 241     2000             8
-## 242     2005             8
-## 243     2010             8
-## 244     2015             8
-## 245     2020             8
-## 246     2025             8
-## 247     2030             8
-## 248     2035             8
-## 249     2040             8
-## 250     2045             8
-## 251     2050             8
-## 252     2055             8
-## 253     2100             8
-## 254     2105             8
-## 255     2110             8
-## 256     2115             8
-## 257     2120             8
-## 258     2125             8
-## 259     2130             8
-## 260     2135             8
-## 261     2140             8
-## 262     2145             8
-## 263     2150             8
-## 264     2155             8
-## 265     2200             8
-## 266     2205             8
-## 267     2210             8
-## 268     2215             8
-## 269     2220             8
-## 270     2225             8
-## 271     2230             8
-## 272     2235             8
-## 273     2240             8
-## 274     2245             8
-## 275     2250             8
-## 276     2255             8
-## 277     2300             8
-## 278     2305             8
-## 279     2310             8
-## 280     2315             8
-## 281     2320             8
-## 282     2325             8
-## 283     2330             8
-## 284     2335             8
-## 285     2340             8
-## 286     2345             8
-## 287     2350             8
-## 288     2355             8</code></pre>
 <p>Because we know that each day has 288 5-minute intervals, this aggregation let us see that missing steps values are evenly distribuited across intervals and in complete certain dates only.</p>
 </div>
 <div id="fill-the-missing-values-in-the-dataset---mean-for-the-5-minute-interval" class="section level3">

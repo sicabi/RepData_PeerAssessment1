@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, results = "show", tidy = "true")
 ```
 
 # Activity Monitoring Data
@@ -19,27 +19,27 @@ In this report I process the physical activity data from an anonymous individual
 
 First, we unzip the data in the working project directory. Then, we should load the data into de R environment. We choose not to convert strings as factors to avoid further problems while reformatting our variables.
 
-```{r load.data, echo = TRUE, results = "show"}
+```{r load-data}
 unzip("activity.zip", list = FALSE)
-activity.data <- read.csv(file = "activity.csv", stringsAsFactors = FALSE,
-                           header = TRUE, fileEncoding = "latin1")
+activity.data <- read.csv(file = "activity.csv", stringsAsFactors = FALSE, header = TRUE, 
+                          fileEncoding = "latin1")
 ```
 
 After loading the data, we preprocess it to make sure ourselves the data is tidy. The first thing to do is to explore the dataset and to know in which format our variables are stored.
 
-```{r process.data1, echo = TRUE, results = "show"}
+```{r process-data1}
 str(activity.data)
 ```
 
-By this exploration, we can see that the date variable is in an R date format (%Y-%m-%d) although it is stored as a character variable. Next, we should set the date up with the command as.Date. As the time zone is not specified from the original source, we assing our current location as the default time zone.
+By this exploration, we can see that the date variable is in an R date format (%Y-%m-%d) although it is stored as a character variable. Next, we should set the date up with the command `as.Date`. As the time zone is not specified from the original source, we assing our current location as the default time zone.
 
-```{r process.data2, echo = TRUE, results = "show"}
+```{r process-data2}
 activity.data$date <-  as.Date(activity.data$date, tz = Sys.timezone())
 ```
 
 We can see that the date variable is stored now in a date format.
 
-```{r process.data3, echo = TRUE, results = "show"}
+```{r process-data3}
 str(activity.data)
 ```
 
@@ -47,7 +47,8 @@ str(activity.data)
 After having loaded and preprocessed our data set we should start making some calculations to get the main descriptive statistics. The first one is the mean total number of steps taken per day.
 
 The mean total number of steps taken per day is the result of adding all the steps taken and then dividing this number by the total number of days in which this measurement was made. 
-```{r total.number.steps1, echo = TRUE, results = "show"}
+
+```{r total-number-steps1}
 total.steps <- sum(activity.data$steps, na.rm = TRUE)
 print(total.steps)
 total.days <- length(unique(activity.data$date))
@@ -62,7 +63,7 @@ So, on average, our individual took 9,354 steps everyday.
 
 We calculate the total number of steps taken per date using the aggregate function and applying, as well, the sum function to it. We store the result of the aggregation in a new data frame.
 
-```{r total.number.steps2, echo = TRUE, results = "hide"}
+```{r total-number-steps2}
 steps.per.day <- aggregate(formula = steps ~ date, data = activity.data, FUN = sum)
 print(steps.per.day)
 ```
@@ -71,7 +72,7 @@ print(steps.per.day)
 
 Then, after having aggreated the total number of steps taken per date, we can plot a histogram that shows the distribution of the total number of steps taken each day. As for the break points of the histogram, we use the conventional method of Sturges to determine the classes of the graph.
 
-```{r total.number.steps3, echo = TRUE, results = "show"}
+```{r total-number-steps3}
 hist(steps.per.day$steps, breaks = "Sturges", main = "Total number of steps taken each day", xlab = "Steps", ylab = "Days")
 ```
 
@@ -81,7 +82,7 @@ We see a normal distribution in the data, meaning that, in most days, our indivi
 
 Finally, we calculate the median and the mean of the steps taken each day using the aggregation data from section 2.1.
 
-```{r total.number.steps4, echo = TRUE, results = "show"}
+```{r total.number-steps4}
 median(steps.per.day$steps)
 mean(steps.per.day$steps)
 ```
@@ -94,21 +95,21 @@ The average daily activity pattern reflects the mean activity per 5-minute inter
 
 To make this, we sum the total number of steps taken for all the 5-minute intervals recorded and we store the results in a new data frame. 
 
-```{r daily.activity.pattern1, echo = TRUE, results = "show"}
+```{r daily.activity-pattern1}
 intervals <- aggregate(steps ~ interval, data = activity.data, sum)
 str(intervals)
 ```
 
 We modify the name of the second variable of the new data frame to work with more clarity.
 
-```{r daily.activity.pattern2, echo = TRUE, results = "show"}
+```{r daily.activity-pattern2}
 names(intervals)[2] <- "total.steps.interval"
 names(intervals)
 ```
 
 Finally, we create a new variable that averages the steps taken by interval everyday.
 
-```{r daily.activity.pattern3, echo = TRUE, results = "show"}
+```{r daily-activity-pattern3}
 intervals$mean.steps.interval <- intervals$total.steps.interval/length(unique(activity.data$date))
 str(intervals)
 ```
@@ -118,7 +119,7 @@ str(intervals)
 After this, we make a time series plot of the 5-minute interval (x-axis) 
 and the average number of steps taken, averaged across all days (y-axis).
 
-```{r daily.activity.plot, echo = TRUE, results = "show"}
+```{r daily-activity-plot}
 with(intervals, plot(x = interval, y = mean.steps.interval, type = "l", 
                      main = "Average number of steps taken by interval per day",
                      xlab = "5-minute interval",
@@ -132,7 +133,7 @@ axis(side = 1, at = seq(from = 0, to = 2300, by = 100),
 
 We observe that the walking activity peak occurs between 8:00 a.m and 9:00 a.m. But, at what moment specifically? To know this, we survey our last data set. 
 
-```{r maximun.steps.number, echo = TRUE, results = "show"}
+```{r maximun-steps-number}
 intervals[which.max(intervals$mean.steps.interval), ]
 ```
 
@@ -146,7 +147,7 @@ Per our first exploration of the data set we saw that there were missing values 
 
 Accordingly, to devise a strategy to imput missing values we need to know the total number of missing values for each variable.
 
-```{r explore.missing2, echo TRUE, results = "show"}
+```{r explore-missing2}
 colSums((is.na(activity.data)))
 ```
 
@@ -154,10 +155,9 @@ We can see that there are no missing values for the date and interval variables,
 
 However, knowing how many missing values are in the steps variable is not enough to devise an imputing strategy. Are this missing values distribuited in some sort or are they just scattered through the variable? That is to say, did the activity monitoring fail among intervals or did the individual just skip the monitoring in given dates? To find out, we create a new variable, missing.steps, that accounts for how this values add up in relation to the date and interval variables.
  
-```{r, explore.missing3, echo = TRUE, results = "show"}
+```{r, explore-missing3}
 activity.data$missing.steps <- ifelse(is.na(activity.data$steps), 1, 0)
 aggregate(formula = missing.steps ~ date, data = activity.data, FUN = sum)
-aggregate(formula = missing.steps ~ interval, data = activity.data, FUN = sum)
 ```
 
 Because we know that each day has 288 5-minute intervals, this aggregation let us see that missing steps values are evenly distribuited across intervals and in complete certain dates only.  
@@ -166,7 +166,7 @@ Because we know that each day has 288 5-minute intervals, this aggregation let u
 
 Correspondingly, our imputation strategy will be to assign the average activity per 5-minute interval for all the dates in which it was measured. We make this in a new variable called imputed.steps. We specify two concurrent conditions for creating this variable. First, it should be a missing value from the steps variable in the original activity.data set and, second, the interval record should be the same of the interval variable from the aggregation data frame we created in section 3, which contains the average activity per 5-minute interval for all days. This will fill the holes in our data.
 
-```{r impute.missing, echo TRUE, results = "show"}
+```{r impute-missing}
 imputed.steps <- ifelse(is.na(activity.data$steps) & 
                                 activity.data$interval == intervals$interval, 
                         intervals$mean.steps.interval, activity.data$steps)
@@ -176,20 +176,20 @@ imputed.steps <- ifelse(is.na(activity.data$steps) &
 
 Then, we create a new data frame from the original one. Next, we assign the imputed steps variable to the steps variable in the new data frame.
 
-```{r new.data.set, echo = TRUE, results = "show"}
+```{r new.data-set}
 new.activity.data <- activity.data
 new.activity.data$steps <- imputed.steps
 ```
 
 We verify the differeces between data sets. The original data set has this structure:
 
-```{r check.data.set1, echo = TRUE, results = "show"}
+```{r check-data-set1}
 str(activity.data)
 ```
 
 While the new one has this structure:
 
-```{r check.data.set2, echo = TRUE, results = "show"}
+```{r check-data-set2}
 str(new.activity.data)
 ```
 
@@ -217,7 +217,7 @@ Now, we can see that this distribution is more left-weighted than the first one.
 
 By recalling the old value of the mean and the median of the total steps taken by our individual we get:
 
-```{r new.steps.mean1, echo = TRUE, results = TRUE}
+```{r new.steps.mean1}
 mean(steps.per.day$steps, na.rm = TRUE)
 median(steps.per.day$steps, na.rm = TRUE)
 ```
@@ -226,7 +226,7 @@ That is to say, without imputation, our individual took an average of 10,766 ste
 
 Now, we calculate the new values for the mean and the median of the total steps taken by our individual with the 5-minute imputation.
 
-```{r new.steps.mean2, echo = TRUE, results = TRUE}
+```{r new.steps.mean2}
 mean(new.steps.per.day$steps)
 median(new.steps.per.day$steps)
 ```
@@ -243,37 +243,37 @@ Then, we should create a new dummy variable that allows us to differentiate betw
 
 Since we have the exact dates of activity, we use the special function weekdays() to know the day of the week to which any given date belongs.
 
-```{r weekdays.weekend1, echo = TRUE, results = "show"}
+```{r weekdays.weekend1}
 new.activity.data$weekday <- weekdays(new.activity.data$date, abbreviate = TRUE)
 ```
 
 After having created the weekday variable, we can now create our factor variable based upon two alternate conditions. If the abbreviation of the variable weekday is "Sat" or if the abbreviation is "Sun", then, we assign the value "Weekend" to the variable weekend. If the weekday has any other value, assign the value "Weekdays" to the weekend variable.
 
-```{r weekdays.weekend2, echo = TRUE, results = "show"}
+```{r weekdays.weekend2}
 new.activity.data$weekend <- ifelse(new.activity.data$weekday == "Sat" | new.activity.data$weekday == "Sun", "Weekend", "Weekdays")
 ```
 
 Also, we need to make sure the new variable weekend to be a factor variable because it will help when we use the lattice plotting system.
 
-```{r weekdays.weekend3, echo = TRUE, results = "show"}
+```{r weekdays.weekend3}
 new.activity.data$weekend <- as.factor(new.activity.data$weekend)
 ```
 
 As in previous sections, we can not plot directly from our original data set because we need to aggregate the data in a convenient format before. In this case, we need to calculate the average steps taken in a given interval for all the days, but adding a condition that accounts if these days are weekends or not. The way to put this in a formula and to store it in a new data frame is this:
 
-```{r weekdays.weekend4, echo = TRUE, results = "show"}
+```{r weekdays.weekend4}
 intervals.weekends <- aggregate(formula = steps ~ interval + weekend, data = new.activity.data, FUN = mean)
 ```
 
 By this operation, we obtain a new data frame with the average steps taken for any given interval for all days but with the distinction of weekdays and weekends.
 
-```{r weekdays.weekend, echo = TRUE, results = "show"}
+```{r weekdays.weekend5}
 str(intervals.weekends)
 ```
 
 Now, we can call the lattice plotting system to know if there are any differences in walking activity between weekdays and weekends.
 
-```{r plot.weekdays.weekend, echo = TRUE, results = "show"}
+```{r plot.weekdays.weekend}
 library("lattice")
 xyplot(steps ~ interval | as.factor(weekend), data = intervals.weekends, 
        type = "l", layout = c(1,2),
@@ -288,7 +288,8 @@ xyplot(steps ~ interval | as.factor(weekend), data = intervals.weekends,
 By the results of the plot, we see that, on average, our individual takes a few more steps in her weekends than in her weekdays. Also, that her activity is more constant along the weekend and that she also starts her days erlier in weekdays.
 
 If we calculate the mean steps given in a 5-minute interval per weekday or weekend we could say that our individual is almost 7 steps more active on weekends per 5-minute interval than in weekdays.
-```{r, echo = TRUE, results = "show"}
+
+```{r mean.steps.weekend}
 mean(intervals.weekends[intervals.weekends$weekend == "Weekdays","steps"])
 mean(intervals.weekends[intervals.weekends$weekend == "Weekend","steps"])
 ```
